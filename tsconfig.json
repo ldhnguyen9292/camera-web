@@ -17,7 +17,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
   },
-  "include": ["src", "type.d.ts"]
+  "include": ["src", ".eslintrc.js"],
+  "files": ["src/types.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -1,8 +1,10 @@
-import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
+
+import dotenv from 'dotenv';
 import { z } from 'zod';
-import { CameraConfig } from '../types';
+
+import { CameraConfig } from './cameraTypes';
 
 dotenv.config();
 
@@ -32,7 +34,7 @@ function loadCamerasConfig(): CameraConfig[] {
   let parsed: unknown;
   try {
     parsed = JSON.parse(rawData);
-  } catch (e) {
+  } catch {
     throw new Error('Invalid JSON format in cameras config file');
   }
 

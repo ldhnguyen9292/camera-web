@@ -1,4 +1,3 @@
-// type.d.ts
 import 'express-session';
 
 // Khai báo type cho biến môi trường
@@ -11,17 +10,8 @@ declare namespace NodeJS {
   }
 }
 
-// Khai báo type chung cho camera
-interface CameraConfig {
-  ip: string;
-  username: string;
-  password: string;
-  rtspUrl: string;
-  onvifPort?: string;
-}
-
 declare module 'express-session' {
   export interface SessionData {
-    user: { [key: string]: any };
+    user: { [key: string]: unknown };
   }
 }

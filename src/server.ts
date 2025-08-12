@@ -1,6 +1,8 @@
+import path from 'path';
+
 import express from 'express';
 import session from 'express-session';
-import path from 'path';
+
 import { camerasConfig } from './config/camera';
 import { env } from './config/env';
 
