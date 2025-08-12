@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Camera List</title>
+  </head>
+  <body>
+    <h1>Camera List</h1>
+    <p>Logged in as <%= locals.user || 'admin' %> | <a href="/logout">Logout</a></p>
+    <ul>
+      <% cameras.forEach(cam => { %>
+      <li>
+        IP:
+        <%= cam.ip %>
+        -
+        <a href="/camera/<%= cam.ip %>">View</a>
+      </li>
+      <% }) %>
+    </ul>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Camera <%= camera.ip %></title>
+  </head>
+  <body>
+    <h1>
+      Camera
+      <%= camera.ip %>
+    </h1>
+    <p><a href="/">Back to list</a></p>
+
+    <!-- Tạm thời show RTSP URL (sau sẽ thay bằng video player) -->
+    <p>RTSP URL: <%= camera.rtspUrl %></p>
+
+    <!-- Sau này chèn video player xem stream -->
+  </body>
+</html>
