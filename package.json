@@ -7,11 +7,11 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev src/server.ts",
-    "lint": "eslint 'src/**/*.{ts,tsx}'",
-    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix",
+    "lint": "eslint src --ext .js,.ts,.tsx",
+    "lint:fix": "eslint src --ext .js,.ts,.tsx --fix",
     "format": "prettier --check 'src/**/*.{ts,tsx,js,json,css,scss,md,ejs,html}'",
     "format:fix": "prettier --write 'src/**/*.{ts,tsx,js,json,css,scss,md,ejs,html}'",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
@@ -20,6 +20,7 @@
     ]
   },
   "dependencies": {
+    "@eslint/js": "^9.33.0",
     "body-parser": "^2.2.0",
     "dotenv": "^17.2.1",
     "ejs": "^3.1.10",
@@ -33,7 +34,9 @@
     "@types/express": "^5.0.3",
     "@types/express-session": "^1.18.2",
     "@types/node": "^24.2.1",
-    "eslint": "^9.33.0",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
+    "eslint": "^8.44.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "husky": "^9.1.7",
