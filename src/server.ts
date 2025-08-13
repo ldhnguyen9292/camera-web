@@ -3,6 +3,7 @@ import path from 'path';
 import express from 'express';
 import session from 'express-session';
 
+import cameraRouter from './cameraService';
 import { camerasConfig } from './config/camera';
 import { env } from './config/env';
 
@@ -39,7 +40,7 @@ app.get('/login', (_req, res) => {
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
   // user cứng
-  if (username === 'admin' && password === 'admin') {
+  if (username === env.USERNAME && password === env.PASSWORD) {
     req.session.user = username;
     return res.redirect('/');
   }
@@ -56,12 +57,8 @@ app.get('/', requireLogin, (_req, res) => {
   res.render('index', { cameras: camerasConfig });
 });
 
-app.get('/camera/:ip', requireLogin, (req, res) => {
-  const ip = req.params.ip;
-  const camera = camerasConfig.find((c) => c.ip === ip);
-  if (!camera) return res.status(404).send('Camera not found');
-  res.render('camera', { camera });
-});
+// Camera routes
+app.use('/camera', requireLogin, cameraRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

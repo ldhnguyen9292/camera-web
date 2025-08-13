@@ -8,7 +8,7 @@ import { CameraConfig } from './cameraTypes';
 
 dotenv.config();
 
-const cameraSchema = z.object({
+export const cameraSchema = z.object({
   ip: z.string().min(7),
   username: z.string().min(1),
   password: z.string().min(1),

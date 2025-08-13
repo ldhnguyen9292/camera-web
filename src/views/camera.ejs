@@ -1,18 +1,177 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Camera <%= camera.ip %></title>
+    <title>Camera <%= camera.ip %> Live Stream</title>
+    <style>
+      body {
+        background: #f5f7fa;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        padding: 2rem 2.5rem;
+        min-width: 340px;
+        max-width: 700px;
+        text-align: center;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 1rem;
+      }
+      .back-link {
+        display: inline-block;
+        margin-bottom: 1.5rem;
+        color: #0078d4;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.2s;
+      }
+      .back-link:hover {
+        color: #005fa3;
+      }
+      .rtsp-url {
+        background: #f0f4fa;
+        padding: 0.75rem;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+        color: #555;
+        font-size: 0.95rem;
+        word-break: break-all;
+      }
+      #video {
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1rem;
+        background: #222;
+      }
+      .hls-message {
+        color: #d32f2f;
+        margin-top: 1rem;
+        font-size: 1rem;
+      }
+      .ptz-btn {
+        margin: 0.25rem;
+        padding: 0.5rem 1.2rem;
+        background: #0078d4;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .ptz-btn:hover {
+        background: #005fa3;
+      }
+      .ptz-circle {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+      }
+      .ptz-btn.ptz-up {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, 0);
+      }
+      .ptz-btn.ptz-down {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, 0);
+      }
+      .ptz-btn.ptz-left {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translate(0, -50%);
+      }
+      .ptz-btn.ptz-right {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translate(0, -50%);
+      }
+    </style>
   </head>
   <body>
-    <h1>
-      Camera
-      <%= camera.ip %>
-    </h1>
-    <p><a href="/">Back to list</a></p>
+    <div class="container">
+      <h1>
+        Camera
+        <%= camera.ip %>
+        Live Stream
+      </h1>
+      <a class="back-link" href="/">← Back to list</a>
+      <div class="rtsp-url" style="display: none">RTSP URL: <%= camera.rtspUrl %></div>
+      <video id="video" width="640" height="480" controls autoplay></video>
+      <div id="hls-message" class="hls-message"></div>
+      <div style="margin-top: 2rem">
+        <h2>PTZ Controls</h2>
+        <div class="ptz-circle">
+          <button class="ptz-btn ptz-up" onclick="sendPTZ(0,1,0)" title="Up">&#8593;</button>
+          <button class="ptz-btn ptz-left" onclick="sendPTZ(-1,0,0)" title="Left">&#8592;</button>
+          <button class="ptz-btn ptz-right" onclick="sendPTZ(1,0,0)" title="Right">&#8594;</button>
+          <button class="ptz-btn ptz-down" onclick="sendPTZ(0,-1,0)" title="Down">&#8595;</button>
+        </div>
+        <div style="margin-top: 1rem">
+          <button class="ptz-btn" onclick="sendPTZ(0,0,1)">Zoom In</button>
+          <button class="ptz-btn" onclick="sendPTZ(0,0,-1)">Zoom Out</button>
+        </div>
+        <div style="margin-top: 2rem">
+          <button class="ptz-btn" onclick="goToPlayback()">Playback</button>
+        </div>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+      <script>
+        var video = document.getElementById('video');
+        var hlsMessage = document.getElementById('hls-message');
+        if (window.Hls && Hls.isSupported()) {
+          var hls = new Hls();
+          hls.loadSource('/camera/hls/<%= camera.ip %>/stream.m3u8');
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MANIFEST_PARSED, function () {
+            video.play();
+          });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = '/camera/hls/<%= camera.ip %>/stream.m3u8';
+          video.addEventListener('loadedmetadata', function () {
+            video.play();
+          });
+        } else {
+          hlsMessage.innerHTML = 'Your browser does not support HLS';
+        }
 
-    <!-- Tạm thời show RTSP URL (sau sẽ thay bằng video player) -->
-    <p>RTSP URL: <%= camera.rtspUrl %></p>
+        // PTZ control function
+        async function sendPTZ(x, y, z, timeout = 1) {
+          try {
+            const res = await fetch('/camera/<%= camera.ip %>/ptz', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ x, y, z, timeout })
+            });
+            const result = await res.json();
+            if (!result.success) {
+              alert('PTZ error: ' + result.error);
+            }
+          } catch (err) {
+            alert('PTZ request failed');
+          }
+        }
 
-    <!-- Sau này chèn video player xem stream -->
+        // Playback button handler
+        function goToPlayback() {
+          window.location.href = '/camera/<%= camera.ip %>/playback';
+        }
+      </script>
+    </div>
   </body>
 </html>

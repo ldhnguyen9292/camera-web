@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Camera <%= ip %> Playback</title>
+    <style>
+      body {
+        background: #f5f7fa;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        padding: 2rem 2.5rem;
+        min-width: 340px;
+        max-width: 700px;
+        text-align: center;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 1rem;
+      }
+      #video {
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1rem;
+        background: #222;
+      }
+      .hls-message {
+        color: #d32f2f;
+        margin-top: 1rem;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>
+        Camera
+        <%= ip %>
+        Playback
+      </h1>
+      <video id="video" width="640" height="480" controls autoplay></video>
+      <div id="hls-message" class="hls-message"></div>
+      <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+      <script>
+        var video = document.getElementById('video');
+        var hlsMessage = document.getElementById('hls-message');
+        if (window.Hls && Hls.isSupported()) {
+          var hls = new Hls();
+          hls.loadSource('<%= playbackUrl %>');
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MANIFEST_PARSED, function () {
+            video.play();
+          });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = '<%= playbackUrl %>';
+          video.addEventListener('loadedmetadata', function () {
+            video.play();
+          });
+        } else {
+          hlsMessage.innerHTML = 'Your browser does not support HLS';
+        }
+      </script>
+    </div>
+  </body>
+</html>

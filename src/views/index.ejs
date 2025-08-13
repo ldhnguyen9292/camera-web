@@ -2,19 +2,81 @@
 <html>
   <head>
     <title>Camera List</title>
+    <style>
+      body {
+        background: #f5f7fa;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        padding: 2rem 2.5rem;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 1.5rem;
+      }
+      .user-bar {
+        text-align: right;
+        margin-bottom: 1.5rem;
+        color: #555;
+      }
+      .user-bar a {
+        color: #0078d4;
+        text-decoration: none;
+        margin-left: 1rem;
+        font-weight: bold;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+      li {
+        background: #f0f4fa;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .camera-ip {
+        font-weight: bold;
+        color: #333;
+      }
+      .view-link {
+        background: #0078d4;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: background 0.2s;
+      }
+      .view-link:hover {
+        background: #005fa3;
+      }
+    </style>
   </head>
   <body>
-    <h1>Camera List</h1>
-    <p>Logged in as <%= locals.user || 'admin' %> | <a href="/logout">Logout</a></p>
-    <ul>
-      <% cameras.forEach(cam => { %>
-      <li>
-        IP:
-        <%= cam.ip %>
-        -
-        <a href="/camera/<%= cam.ip %>">View</a>
-      </li>
-      <% }) %>
-    </ul>
+    <div class="container">
+      <h1>Camera List</h1>
+      <div class="user-bar">
+        Logged in as <%= locals.user || 'admin' %> | <a href="/logout">Logout</a>
+      </div>
+      <ul>
+        <% cameras.forEach(cam => { %>
+        <li>
+          <span class="camera-ip">IP: <%= cam.ip %></span>
+          <a class="view-link" href="/camera/<%= cam.ip %>">View</a>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
   </body>
 </html>
